@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">QuizGameV2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_in">Sign In</string>
+    <string name="continue_with_google">Continue With Google</string>
+    <string name="forgot_password">I forgot my password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="don_t_you_have_an_account_yet">Don"'"t you have an account yet?</string>
+    <string name="default_web_client_id">591483755111-pua3tg8a0v7d4qvfe17qu3c3hk7csjhn.apps.googleusercontent.com</string>
+</resources>
