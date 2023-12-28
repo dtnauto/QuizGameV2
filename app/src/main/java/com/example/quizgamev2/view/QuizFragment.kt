@@ -109,7 +109,7 @@ class QuizFragment : Fragment() {
             timer?.cancel()
             timer = object : CountDownTimer(5L * 1000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
-                    txt_timer.text = (millisUntilFinished / 1000).toString() + ""
+                    txt_timer.text = "Timer: " + (millisUntilFinished / 1000)
                 }
                 override fun onFinish() {
                     txt_question.setText("Times Up !! No answer selected")
@@ -135,9 +135,9 @@ class QuizFragment : Fragment() {
     }
 
     private fun loadScore() {
-        resultViewModel.observerCurrentScores().observe(viewLifecycleOwner){
-            txt_correct.text = it.correct.toString()
-            txt_wrong.text = it.wrong.toString()
+        resultViewModel.observerCurrentScores().observe(viewLifecycleOwner) {
+            txt_correct.text = "Correct Answer: " + it.correct
+            txt_wrong.text = "Wrong Answer: " + it.wrong
         }
     }
 
@@ -230,13 +230,13 @@ class QuizFragment : Fragment() {
 
     private fun showResultDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Quiz Completed")
-        alertDialogBuilder.setMessage("Do you want to play again or go to the result page?")
+        alertDialogBuilder.setTitle("Quiz Game")
+        alertDialogBuilder.setMessage("Congratulations!!! \n You have answered all the questions. Do you want to see the result?")
 
-        alertDialogBuilder.setPositiveButton("PLAY AGAIN") { _, _ ->
+        alertDialogBuilder.setNegativeButton("PLAY AGAIN") { _, _ ->
             navController.navigate(R.id.quizFragment)
             resultViewModel.resetAnswer()
-        }.setNegativeButton("RESULT PAGE") { _, _ ->
+        }.setPositiveButton("SEE RESULT") { _, _ ->
             resultViewModel.writeScores()
             timer?.cancel()
             resultViewModel.finish(totalQuestions)
