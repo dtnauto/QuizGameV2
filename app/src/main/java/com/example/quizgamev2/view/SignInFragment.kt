@@ -114,27 +114,18 @@ class SignInFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == RC_SIGN_IN) {
             if (data != null) {
-                val idToken = handleGoogleSignInResult(data)
-                idToken?.let {
-                    viewModel.signInWithGoogle(it)
+                try {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                    val account = task.getResult(ApiException::class.java)
+                    account.idToken?.let { viewModel.signInWithGoogle(it) }
+                } catch (e: ApiException) {
+                    Log.e("GoogleTest", "ApiException: ${e.message}")
                 }
             } else {
                 Log.d("GoogleTest", "Data is null")
             }
         }
-    }
-    private fun handleGoogleSignInResult(data: Intent?): String? {
-        try {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            val account = task.getResult(ApiException::class.java)
-            return account?.idToken
-        } catch (e: ApiException) {
-            // Xử lý lỗi nếu cần thiết
-            Log.e("GoogleTest", "ApiException: ${e.message}")
-        }
-        return null
     }
 }

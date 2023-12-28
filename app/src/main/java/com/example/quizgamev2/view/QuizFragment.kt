@@ -192,6 +192,7 @@ class QuizFragment : Fragment() {
                 "d" -> setBackground(txt_option4, true)
             }
         }
+        selected="true"
     }
 
     private fun setBackground(txt_color : TextView , isCorrect : Boolean) {
@@ -213,6 +214,7 @@ class QuizFragment : Fragment() {
         btn_next.setOnClickListener{
             currentQuestion++
             if (currentQuestion < totalQuestions){
+                if (selected!="true") checkAnswer()
                 loadQuestion()
             }else{
                 showResultDialog()

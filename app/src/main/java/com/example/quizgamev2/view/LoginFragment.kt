@@ -12,6 +12,9 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.quizgamev2.R
 import com.example.quizgamev2.viewmodel.AuthViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class LoginFragment : Fragment() {
 
@@ -21,6 +24,8 @@ class LoginFragment : Fragment() {
         viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
     }
 
+
+    private lateinit var googleSignInClient: GoogleSignInClient
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +44,13 @@ class LoginFragment : Fragment() {
 
         btn_sign_out=view.findViewById(R.id.btn_sign_out)
         btn_start=view.findViewById(R.id.btn_start)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
         addEventOnViewCreated()
     }
@@ -64,6 +76,11 @@ class LoginFragment : Fragment() {
     private fun btnSignOut() {
         btn_sign_out.setOnClickListener{
             viewModel.signOut()
+            signOutGoogle()
         }
+    }
+
+    private fun signOutGoogle() {
+        googleSignInClient.signOut()
     }
 }

@@ -74,6 +74,7 @@
     </LinearLayout>
 
     <ImageButton
+        android:background="@color/white"
         android:id="@+id/btn_back"
         android:layout_width="60dp"
         android:layout_height="42dp"
