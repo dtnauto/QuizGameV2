@@ -1,6 +1,6 @@
 package com.example.quizgamev2.model
 
-class AuthModel(
+data class AuthModel(
     var email: String?
 ) {
 }

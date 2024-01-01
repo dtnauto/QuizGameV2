@@ -72,7 +72,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun loadScore() {
-        resultViewModel.observerCurrentScores().observe(viewLifecycleOwner){
+        resultViewModel.currentScoreLiveData.observe(viewLifecycleOwner){
             txt_correct.text = it.correct.toString()
             txt_wrong.text = it.wrong.toString()
         }

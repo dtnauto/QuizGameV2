@@ -1,6 +1,6 @@
 package com.example.quizgamev2.model
 
-class QuizModel(
+data class QuizModel(
     var q: String?,
     var a: String?,
     var b: String?,

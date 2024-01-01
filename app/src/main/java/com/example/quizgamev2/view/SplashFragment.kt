@@ -20,7 +20,7 @@ class SplashFragment : Fragment() {
         super.onCreate(savedInstanceState)
         viewModel =  ViewModelProvider(this)[AuthViewModel::class.java]
         Handler().postDelayed({
-            if (viewModel.currentUser != null) {
+            if (viewModel.repository.firebaseAuth.currentUser != null) {
                 navController?.navigate(R.id.action_splashFragment_to_loginFragment)
             } else {
                 navController?.navigate(R.id.action_splashFragment_to_signInFragment)

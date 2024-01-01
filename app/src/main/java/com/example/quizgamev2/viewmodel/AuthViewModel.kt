@@ -4,30 +4,69 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.quizgamev2.repository.AuthRepository
 import com.google.firebase.auth.FirebaseUser
 
-class AuthViewModel(application: Application): AndroidViewModel(application) {
-    var repository = AuthRepository(application)
-    var currentUser: FirebaseUser? = repository.firebaseAuth.currentUser
+class AuthViewModel : ViewModel() {
+    var repository = AuthRepository()
 
-    fun obseverCurrentUser(): LiveData<FirebaseUser>{
-        return repository.currentUserLiveData
-    }
+    private var _currentUserLiveData = MutableLiveData<FirebaseUser>()
+    val currentUserLiveData: LiveData<FirebaseUser> = _currentUserLiveData
+
+    private var _errorMessageLiveData: MutableLiveData<String> = MutableLiveData()
+    val errorMessageLiveData: LiveData<String> = _errorMessageLiveData
 
     fun signUp(email: String, password: String) {
-        repository.signUp(email, password)
+        repository.signUp(
+            email,
+            password,
+            onComplete = { user ->
+                _currentUserLiveData.postValue(user)
+            },
+            onError = { errorMessage ->
+                _errorMessageLiveData.postValue(errorMessage)
+            }
+        )
     }
 
     fun signIn(email: String, password: String) {
-        repository.signIn(email, password)
+        repository.signIn(
+            email,
+            password,
+            onComplete = { user ->
+                _currentUserLiveData.postValue(user)
+            },
+            onError = { errorMessage ->
+                _errorMessageLiveData.postValue(errorMessage)
+            }
+        )
     }
 
     fun signOut() {
-        repository.signOut()
+        repository.signOut(
+            onComplete = { user ->
+                _currentUserLiveData.postValue(user)
+            },
+            onError = { errorMessage ->
+                _errorMessageLiveData.postValue(errorMessage)
+            }
+        )
     }
 
     fun signInWithGoogle(idToken: String) {
-        repository.signInWithGoogle(idToken)
+        repository.signInWithGoogle(
+            idToken,
+            onComplete = { user ->
+                _currentUserLiveData.postValue(user)
+            },
+            onError = { errorMessage ->
+                _errorMessageLiveData.postValue(errorMessage)
+            })
+    }
+
+    fun sendEmailToResetPassword(email: String) {
+        repository.sendEmailToResetPassword(email)
     }
 }

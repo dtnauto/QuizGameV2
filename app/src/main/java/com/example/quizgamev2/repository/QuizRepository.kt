@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.quizgamev2.model.QuizModel
 import com.example.quizgamev2.model.ResultModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -12,20 +13,15 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import kotlinx.coroutines.tasks.await
 
-class QuizRepository(var onQuestionLoad: OnQuestionLoad) {
-    var database = Firebase.database
-    var listQuestions = mutableListOf<QuizModel>()
-//    var currentListQuestions = MutableLiveData<List<QuizModel>>()
+class QuizRepository {
+    private var database = Firebase.database
 
-    fun readQuestions() {
-//        database.getReference("test").get().addOnSuccessListener {
-//            Log.e("mycodeisblocking", "Got value ${it.value.toString()}")
-//        }.addOnFailureListener{
-//            Log.e("mycodeisblocking", "Error getting data", it)
-//        }
+    fun readQuestions(
+        onQuestionLoad: (MutableList<QuizModel>) -> Unit
+    ) {
         database.reference.child("questions").get()
             .addOnSuccessListener {
-                listQuestions.clear()
+                var listQuestions = mutableListOf<QuizModel>()
                 it.children.forEach {
                     if (it.exists()) {
                         val question = QuizModel(
@@ -40,15 +36,10 @@ class QuizRepository(var onQuestionLoad: OnQuestionLoad) {
 //                        Log.e("mycodeisblocking","${question}")
                     }
                 }
-                onQuestionLoad.onLoad(listQuestions)
-//                Log.e("mycodeisblocking","ajdsfkls ${currentListQuestions.value?.get(0)?.q}")
+                onQuestionLoad(listQuestions)
             }
             .addOnFailureListener {
                 Log.e("mycodeisblocking", "Error getting data")
             }
-    }
-
-    interface OnQuestionLoad{ // tạo interface
-        fun onLoad(listQuestions: MutableList<QuizModel>)
     }
 }

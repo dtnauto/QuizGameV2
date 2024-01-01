@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -17,10 +18,10 @@ import com.google.android.material.textfield.TextInputEditText
 
 class SignUpFragment : Fragment() {
 
-    lateinit var viewModel: AuthViewModel
+    private lateinit var authViewModel: AuthViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -45,11 +46,18 @@ class SignUpFragment : Fragment() {
         btn_sign_up=view.findViewById(R.id.btn_sign_up)
         btn_back=view.findViewById(R.id.btn_back)
 
+        authViewModel.currentUserLiveData.observe(viewLifecycleOwner) {
+            navController.navigate(R.id.action_signUpFragment_to_signInFragment)
+        }
+        authViewModel.errorMessageLiveData.observe(viewLifecycleOwner) { errorMessage ->
+            // Display error message if login fails
+            Toast.makeText(requireContext() , errorMessage , Toast.LENGTH_SHORT).show()
+        }
+
         addEventOnViewCreated()
     }
 
     private fun addEventOnViewCreated() {
-        obseverCurrentUser(viewLifecycleOwner)
         btnSignUp()
         btnBack()
     }
@@ -60,19 +68,14 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    private fun obseverCurrentUser(owner: LifecycleOwner) {
-        viewModel.obseverCurrentUser().observe(owner) {
-            navController.navigate(R.id.action_signUpFragment_to_signInFragment)
-        }
-    }
-
     private fun btnSignUp() {
         btn_sign_up.setOnClickListener{
             val email = email.text.toString().trim()
             val password = password.text.toString().trim()
             if(email.isNotEmpty() && password.isNotEmpty()){
-                viewModel.signUp(email, password)
+                authViewModel.signUp(email, password)
             }
         }
     }
+
 }

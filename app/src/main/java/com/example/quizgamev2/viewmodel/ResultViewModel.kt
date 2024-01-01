@@ -8,20 +8,17 @@ import com.example.quizgamev2.model.QuizModel
 import com.example.quizgamev2.model.ResultModel
 import com.example.quizgamev2.repository.ResultRepository
 
-class ResultViewModel: ViewModel(), ResultRepository.OnResultLoad {
+class ResultViewModel: ViewModel() {
     var repository = ResultRepository()
 
     var currentScore = ResultModel(0,0)
-    var observerCurrentScores = MutableLiveData<ResultModel>(currentScore)
-
-    fun readScores() {
-        repository.readScores()
-    }
+    private var _currentScoreLiveData = MutableLiveData<ResultModel>(currentScore)
+    val currentScoreLiveData: LiveData<ResultModel> = _currentScoreLiveData
 
     fun resetAnswer(){
         currentScore.correct = 0
         currentScore.wrong = 0
-        observerCurrentScores.postValue(currentScore)
+        _currentScoreLiveData.postValue(currentScore)
     }
 
     fun checkAnswer(checked: Boolean,num_q: Int){
@@ -32,27 +29,19 @@ class ResultViewModel: ViewModel(), ResultRepository.OnResultLoad {
             currentScore.wrong = currentScore.wrong?.plus(num_q)
             Log.e("mycodeisblocking",currentScore.wrong.toString())
         }
-        observerCurrentScores.postValue(currentScore)
+        _currentScoreLiveData.postValue(currentScore)
     }
 
-    fun finish(num_q: Int){
+    fun checkAnswer(num_q: Int){
         currentScore.wrong = num_q - currentScore.correct!!
-        observerCurrentScores.postValue(currentScore)
+        _currentScoreLiveData.postValue(currentScore)
     }
 
-    fun observerCurrentScores(): LiveData<ResultModel> {
-        return observerCurrentScores
-    }
-
-    override fun OnResultLoad(score: ResultModel) {
-        observerCurrentScores.value = score
-    }
+    //    fun readScores() {
+//        repository.readScores()
+//    }
 
     fun writeScores() {
         repository.writeScores(currentScore)
-    }
-
-    fun writeScores(score: ResultModel) {
-        repository.writeScores(score)
     }
 }

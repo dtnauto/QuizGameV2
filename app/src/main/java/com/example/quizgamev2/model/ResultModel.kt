@@ -1,6 +1,6 @@
 package com.example.quizgamev2.model
 
-class ResultModel(
+data class ResultModel(
     var correct: Int?,
     var wrong: Int?
 ) {

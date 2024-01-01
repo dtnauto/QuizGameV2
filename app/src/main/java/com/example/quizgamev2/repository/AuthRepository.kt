@@ -9,70 +9,81 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 
-class AuthRepository(var application: Application) {
+class AuthRepository {
 
     var firebaseAuth = Firebase.auth
-    var currentUserLiveData = MutableLiveData<FirebaseUser>()
-    fun signUp(email: String, password: String) {
+    fun signUp(
+        email: String,
+        password: String,
+        onComplete: (FirebaseUser?) -> Unit,
+        onError: (String) -> Unit
+    ) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener() { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d("mycodeisblocking", "createUserWithEmail:success")
-                    currentUserLiveData.postValue(firebaseAuth.currentUser)
+                    val user = firebaseAuth.currentUser
+                    onComplete(user)
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("mycodeisblocking", "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(
-                        application,
-                        "Authentication failed.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    onError("Authentication failed")
                 }
             }
     }
 
-    fun signIn(email: String, password: String) {
+    fun signIn(
+        email: String,
+        password: String,
+        onComplete: (FirebaseUser?) -> Unit,
+        onError: (String) -> Unit
+    ) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener() { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.e("mycodeisblocking", "signInWithEmail:success")
-                    currentUserLiveData.postValue(firebaseAuth.currentUser)
+                    val user = firebaseAuth.currentUser
+                    onComplete(user)
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.e("mycodeisblocking", "signInWithEmail:failure", task.exception)
-                    Toast.makeText(
-                        application,
-                        "Authentication failed.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    onError("Authentication failed")
                 }
             }
     }
 
-    fun signOut() {
+    fun signOut(
+        onComplete: (FirebaseUser?) -> Unit,
+        onError: (String) -> Unit
+    ) {
         firebaseAuth.signOut()
-        currentUserLiveData.postValue(firebaseAuth.currentUser)
+        val user = firebaseAuth.currentUser
+        onComplete(user)
+//        currentUserLiveData.postValue(firebaseAuth.currentUser)
     }
 
-    fun signInWithGoogle(idToken: String) {
+    fun signInWithGoogle(
+        idToken: String,
+        onComplete: (FirebaseUser?) -> Unit,
+        onError: (String) -> Unit
+    ) {
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(firebaseCredential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.e("mycodeisblocking", "signInWithEmail:success")
-                    currentUserLiveData.postValue(firebaseAuth.currentUser)
+                    val user = firebaseAuth.currentUser
+                    onComplete(user)
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.e("mycodeisblocking", "signInWithEmail:failure", task.exception)
-                    Toast.makeText(
-                        application,
-                        "Authentication failed.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    onError("Authentication failed")
                 }
             }
+    }
+
+    fun sendEmailToResetPassword(email: String?): Boolean {
+        if (email != null && email.isNotEmpty()) {
+            firebaseAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("SendEmailResetPassword", "Email sent.")
+                    }
+                }
+            return true
+        } else {
+            return false
+        }
     }
 }

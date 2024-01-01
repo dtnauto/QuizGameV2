@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -23,10 +24,10 @@ import com.google.android.material.textfield.TextInputEditText
 
 class SignInFragment : Fragment() {
 
-    lateinit var viewModel: AuthViewModel
+    private lateinit var authViewModel: AuthViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -42,6 +43,7 @@ class SignInFragment : Fragment() {
     lateinit var password: TextInputEditText
     lateinit var btn_sign_in: Button
     lateinit var txt_sign_up: TextView
+    lateinit var txt_forgot_password: TextView
 
     lateinit var btn_continue_with_google: SignInButton
 
@@ -51,18 +53,34 @@ class SignInFragment : Fragment() {
         email=view.findViewById(R.id.txt_email)
         password=view.findViewById(R.id.txt_password)
         btn_sign_in=view.findViewById(R.id.btn_sign_in)
+        txt_forgot_password=view.findViewById(R.id.txt_forgot_password)
         txt_sign_up=view.findViewById(R.id.txt_sign_up)
 
         btn_continue_with_google=view.findViewById(R.id.btn_continue_with_google)
+
+        authViewModel.currentUserLiveData.observe(viewLifecycleOwner) {
+            navController.navigate(R.id.action_signInFragment_to_loginFragment)
+        }
+
+        authViewModel.errorMessageLiveData.observe(viewLifecycleOwner) { errorMessage ->
+            // Display error message if login fails
+            Toast.makeText(requireContext() , errorMessage , Toast.LENGTH_SHORT).show()
+        }
 
         addEventOnViewCreated()
     }
 
     private fun addEventOnViewCreated() {
-        obseverCurrentUser(viewLifecycleOwner)
         btnSignIn()
         btnSignUp()
+        btnForgotPassword()
         btnSignInWithGoogle()
+    }
+
+    private fun btnForgotPassword() {
+        txt_forgot_password.setOnClickListener(){
+            navController.navigate(R.id.action_signInFragment_to_forgotPasswordFragment)
+        }
     }
 
     private fun btnSignInWithGoogle() {
@@ -77,29 +95,18 @@ class SignInFragment : Fragment() {
         }
     }
 
-    private fun obseverCurrentUser(owner: LifecycleOwner) {
-        viewModel.obseverCurrentUser().observe(owner) {
-            navController.navigate(R.id.action_signInFragment_to_loginFragment)
-        }
-    }
-
     private fun btnSignIn() {
         btn_sign_in.setOnClickListener{
             val email = email.text.toString().trim()
             val password = password.text.toString().trim()
             if(email.isNotEmpty() && password.isNotEmpty()){
-                viewModel.signIn(email, password)
+                authViewModel.signIn(email, password)
             }
         }
     }
 
     val RC_SIGN_IN = 9001
     private fun startSignInWithGoogle() {
-        val signInIntent = getGoogleSignInIntent()
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-
-    private fun getGoogleSignInIntent(): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -109,9 +116,8 @@ class SignInFragment : Fragment() {
             requireActivity(),
             gso
         )
-        return googleSignInClient.signInIntent
+        startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -119,12 +125,12 @@ class SignInFragment : Fragment() {
                 try {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                     val account = task.getResult(ApiException::class.java)
-                    account.idToken?.let { viewModel.signInWithGoogle(it) }
+                    account.idToken?.let { authViewModel.signInWithGoogle(it) }
                 } catch (e: ApiException) {
-                    Log.e("GoogleTest", "ApiException: ${e.message}")
+                    Log.e("mycodeisblocking", "ApiException: ${e.message}")
                 }
             } else {
-                Log.d("GoogleTest", "Data is null")
+                Log.d("mycodeisblocking", "Data is null")
             }
         }
     }

@@ -101,7 +101,7 @@ class QuizFragment : Fragment() {
         quizViewModel.readQuestions()
     }
     private fun loadQuestion() {
-        quizViewModel.observerCurrentListQuestions().observe(viewLifecycleOwner){
+        quizViewModel.currentListQuestions.observe(viewLifecycleOwner){
                 quizModel ->
 
             selected="" // resetanswer
@@ -118,7 +118,7 @@ class QuizFragment : Fragment() {
                 }
             }.start()
 
-            totalQuestions = quizViewModel.repository.listQuestions.size
+            totalQuestions = quizModel.size
             txt_question.text = quizModel[currentQuestion].q
             txt_option1.text = quizModel[currentQuestion].a
             txt_option2.text = quizModel[currentQuestion].b
@@ -135,7 +135,7 @@ class QuizFragment : Fragment() {
     }
 
     private fun loadScore() {
-        resultViewModel.observerCurrentScores().observe(viewLifecycleOwner) {
+        resultViewModel.currentScoreLiveData.observe(viewLifecycleOwner) {
             txt_correct.text = "Correct Answer: " + it.correct
             txt_wrong.text = "Wrong Answer: " + it.wrong
         }
@@ -230,16 +230,15 @@ class QuizFragment : Fragment() {
 
     private fun showResultDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        timer?.cancel()
         alertDialogBuilder.setTitle("Quiz Game")
         alertDialogBuilder.setMessage("Congratulations!!! \n You have answered all the questions. Do you want to see the result?")
-
         alertDialogBuilder.setNegativeButton("PLAY AGAIN") { _, _ ->
             navController.navigate(R.id.quizFragment)
             resultViewModel.resetAnswer()
         }.setPositiveButton("SEE RESULT") { _, _ ->
             resultViewModel.writeScores()
-            timer?.cancel()
-            resultViewModel.finish(totalQuestions)
+            resultViewModel.checkAnswer(totalQuestions)
             navController.navigate(R.id.action_quizFragment_to_resultFragment)
         }
         alertDialogBuilder.setCancelable(false)

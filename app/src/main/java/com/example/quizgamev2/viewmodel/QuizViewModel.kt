@@ -10,19 +10,17 @@ import com.example.quizgamev2.repository.QuizRepository
 import com.example.quizgamev2.repository.ResultRepository
 import kotlinx.coroutines.async
 
-class QuizViewModel: ViewModel(), QuizRepository.OnQuestionLoad {
-    var repository = QuizRepository(this)
-    var currentListQuestions = MutableLiveData<List<QuizModel>>()
+class QuizViewModel: ViewModel(){
+    var repository = QuizRepository()
+
+    private val _currentListQuestions = MutableLiveData<List<QuizModel>>()
+    var currentListQuestions: LiveData<List<QuizModel>> = _currentListQuestions
 
     fun readQuestions() {
-        repository.readQuestions()
-    }
-
-    fun observerCurrentListQuestions(): LiveData<List<QuizModel>> {
-        return currentListQuestions
-    }
-
-    override fun onLoad(listQuestions: MutableList<QuizModel>) {
-        currentListQuestions.value = listQuestions
+        repository.readQuestions(
+            onQuestionLoad = { listQuestions ->
+                _currentListQuestions.postValue(listQuestions)
+            },
+        )
     }
 }
