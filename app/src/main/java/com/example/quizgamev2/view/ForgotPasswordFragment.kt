@@ -16,10 +16,10 @@ import com.google.android.material.textfield.TextInputEditText
 
 class ForgotPasswordFragment : Fragment() {
 
-    lateinit var viewModel: AuthViewModel
+    private lateinit var authViewModel: AuthViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -42,7 +42,7 @@ class ForgotPasswordFragment : Fragment() {
 
         btn_reset.setOnClickListener {
             val email = txt_email.text.toString()
-            viewModel.sendEmailToResetPassword(email)
+            authViewModel.sendEmailToResetPassword(email)
             navController.navigate(R.id.action_forgotPasswordFragment_to_signInFragment)
         }
     }

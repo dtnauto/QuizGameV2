@@ -13,14 +13,14 @@ import kotlinx.coroutines.async
 class QuizViewModel: ViewModel(){
     var repository = QuizRepository()
 
-    private val _currentListQuestions = MutableLiveData<List<QuizModel>>()
-    var currentListQuestions: LiveData<List<QuizModel>> = _currentListQuestions
+    private var _currentListQuestions = MutableLiveData<List<QuizModel>>()
+    val currentListQuestions: LiveData<List<QuizModel>> = _currentListQuestions
 
     fun readQuestions() {
         repository.readQuestions(
             onQuestionLoad = { listQuestions ->
                 _currentListQuestions.postValue(listQuestions)
-            },
+            }
         )
     }
 }

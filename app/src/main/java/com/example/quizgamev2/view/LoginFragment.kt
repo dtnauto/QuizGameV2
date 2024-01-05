@@ -6,11 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.quizgamev2.R
+import com.example.quizgamev2.databinding.FragmentLoginBinding
+import com.example.quizgamev2.databinding.FragmentSignInBinding
 import com.example.quizgamev2.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -24,24 +27,27 @@ class LoginFragment : Fragment() {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
     }
 
+    lateinit var fragmentLoginBinding: FragmentLoginBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        fragmentLoginBinding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_login, container, false)
+        return fragmentLoginBinding.root
+//        return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
     lateinit var navController: NavController
 
-    lateinit var btn_sign_out: Button
-    lateinit var btn_start: Button
+//    lateinit var btn_sign_out: Button
+//    lateinit var btn_start: Button
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
-        btn_sign_out=view.findViewById(R.id.btn_sign_out)
-        btn_start=view.findViewById(R.id.btn_start)
+//        btn_sign_out=view.findViewById(R.id.btn_sign_out)
+//        btn_start=view.findViewById(R.id.btn_start)
 
         authViewModel.currentUserLiveData.observe(viewLifecycleOwner) {
             navController.navigate(R.id.action_loginFragment_to_signInFragment)
@@ -56,13 +62,13 @@ class LoginFragment : Fragment() {
     }
 
     private fun btnStart() {
-        btn_start.setOnClickListener{
+        fragmentLoginBinding.btnStart.setOnClickListener{
             navController.navigate(R.id.action_loginFragment_to_quizFragment)
         }
     }
 
     private fun btnSignOut() {
-        btn_sign_out.setOnClickListener{
+        fragmentLoginBinding.btnSignOut.setOnClickListener{
             authViewModel.signOut()
             signOutGoogle()
         }

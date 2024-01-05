@@ -16,7 +16,7 @@ import com.example.quizgamev2.viewmodel.ResultViewModel
 
 class ResultFragment : Fragment() {
 
-    lateinit var resultViewModel: ResultViewModel
+    private lateinit var resultViewModel: ResultViewModel
     lateinit var navController: NavController
 
     lateinit var txt_correct: TextView
