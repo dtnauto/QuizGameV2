@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.quizgamev2.R
+import com.example.quizgamev2.databinding.FragmentResultBinding
 import com.example.quizgamev2.viewmodel.QuizViewModel
 import com.example.quizgamev2.viewmodel.ResultViewModel
 
@@ -19,23 +21,26 @@ class ResultFragment : Fragment() {
     private lateinit var resultViewModel: ResultViewModel
     lateinit var navController: NavController
 
-    lateinit var txt_correct: TextView
-    lateinit var txt_wrong: TextView
-
-    lateinit var btn_exit: Button
-    lateinit var btn_play_again: Button
+//    lateinit var txt_correct: TextView
+//    lateinit var txt_wrong: TextView
+//
+//    lateinit var btn_exit: Button
+//    lateinit var btn_play_again: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         resultViewModel = ViewModelProvider(requireActivity())[ResultViewModel::class.java]
     }
 
+    lateinit var fragmentResultBinding: FragmentResultBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_result, container, false)
+        fragmentResultBinding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_result, container, false)
+        return fragmentResultBinding.root
+//        return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,11 +48,11 @@ class ResultFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-        txt_correct=view.findViewById(R.id.txt_correct)
-        txt_wrong=view.findViewById(R.id.txt_wrong)
-
-        btn_exit=view.findViewById(R.id.btn_exit)
-        btn_play_again=view.findViewById(R.id.btn_play_again)
+//        txt_correct=view.findViewById(R.id.txt_correct)
+//        txt_wrong=view.findViewById(R.id.txt_wrong)
+//
+//        btn_exit=view.findViewById(R.id.btn_exit)
+//        btn_play_again=view.findViewById(R.id.btn_play_again)
 
         addEvent()
     }
@@ -59,22 +64,22 @@ class ResultFragment : Fragment() {
     }
 
     private fun btnPlayAgain() {
-        btn_play_again.setOnClickListener{
+        fragmentResultBinding.btnPlayAgain.setOnClickListener{
             resultViewModel.resetAnswer()
             navController.navigate(R.id.action_resultFragment_to_quizFragment)
         }
     }
 
     private fun btnExit() {
-        btn_exit.setOnClickListener{
+        fragmentResultBinding.btnExit.setOnClickListener{
             navController.navigate(R.id.action_resultFragment_to_loginFragment)
         }
     }
 
     private fun loadScore() {
         resultViewModel.currentScoreLiveData.observe(viewLifecycleOwner){
-            txt_correct.text = it.correct.toString()
-            txt_wrong.text = it.wrong.toString()
+            fragmentResultBinding.txtCorrect.text = it.correct.toString()
+            fragmentResultBinding.txtWrong.text = it.wrong.toString()
         }
     }
 }
