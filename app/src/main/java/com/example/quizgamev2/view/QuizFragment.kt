@@ -29,31 +29,8 @@ import kotlin.Long
 
 class QuizFragment : Fragment() {
 
-    lateinit var quizViewModel: QuizViewModel
-    lateinit var resultViewModel: ResultViewModel
-    lateinit var navController: NavController
-
-//    lateinit var txt_question: TextView
-//    lateinit var txt_option1: TextView
-//    lateinit var txt_option2: TextView
-//    lateinit var txt_option3: TextView
-//    lateinit var txt_option4: TextView
-//    lateinit var txt_timer: TextView
-//    lateinit var txt_correct: TextView
-//    lateinit var txt_wrong: TextView
-//
-//    lateinit var progressBar: ProgressBar
-//    lateinit var layout_quiz: RelativeLayout
-//
-//    lateinit var btn_next: Button
-//    lateinit var btn_finish: Button
-
-    var timer: CountDownTimer? = null
-    var totalQuestions = 0
-    var currentQuestion = 0
-
-    var answer: String? = ""
-    var selected: String = ""
+    private lateinit var quizViewModel: QuizViewModel
+    private lateinit var resultViewModel: ResultViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,28 +45,24 @@ class QuizFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         fragmentQuizBinding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_quiz, container, false)
+        fragmentQuizBinding.quizViewModel=quizViewModel
+        fragmentQuizBinding.resultViewModel=resultViewModel
+
+        fragmentQuizBinding.quizFragment=this
         return fragmentQuizBinding.root
-//        return inflater.inflate(R.layout.fragment_quiz, container, false)
     }
 
+    lateinit var navController: NavController
+
+    var timer: CountDownTimer? = null
+    var totalQuestions = 0
+    var currentQuestion = 0
+
+    var answer: String? = ""
+    var selected: String = ""
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-
-//        txt_question=view.findViewById(R.id.txt_question)
-//        txt_option1=view.findViewById(R.id.txt_option1)
-//        txt_option2=view.findViewById(R.id.txt_option2)
-//        txt_option3=view.findViewById(R.id.txt_option3)
-//        txt_option4=view.findViewById(R.id.txt_option4)
-//        txt_timer=view.findViewById(R.id.txt_timer)
-//        txt_correct=view.findViewById(R.id.txt_correct)
-//        txt_wrong=view.findViewById(R.id.txt_wrong)
-//
-//        progressBar=view.findViewById(R.id.progressBar)
-//        layout_quiz=view.findViewById(R.id.layout_quiz)
-//
-//        btn_next=view.findViewById(R.id.btn_next)
-//        btn_finish=view.findViewById(R.id.btn_finish)
 
         addEvent()
     }
@@ -117,7 +90,7 @@ class QuizFragment : Fragment() {
                     fragmentQuizBinding.txtTimer.text = "Timer: " + (millisUntilFinished / 1000)
                 }
                 override fun onFinish() {
-                    fragmentQuizBinding.txtQuestion.setText("Times Up !! No answer selected")
+                    fragmentQuizBinding.txtQuestion.text = "Times Up !! No answer selected"
                     enableOptions(false)
                     checkAnswer()
                 }

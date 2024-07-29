@@ -19,14 +19,6 @@ import com.example.quizgamev2.viewmodel.ResultViewModel
 class ResultFragment : Fragment() {
 
     private lateinit var resultViewModel: ResultViewModel
-    lateinit var navController: NavController
-
-//    lateinit var txt_correct: TextView
-//    lateinit var txt_wrong: TextView
-//
-//    lateinit var btn_exit: Button
-//    lateinit var btn_play_again: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         resultViewModel = ViewModelProvider(requireActivity())[ResultViewModel::class.java]
@@ -40,19 +32,14 @@ class ResultFragment : Fragment() {
         // Inflate the layout for this fragment
         fragmentResultBinding = DataBindingUtil.inflate(layoutInflater,R.layout.fragment_result, container, false)
         return fragmentResultBinding.root
-//        return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
+
+    lateinit var navController: NavController
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
-//        txt_correct=view.findViewById(R.id.txt_correct)
-//        txt_wrong=view.findViewById(R.id.txt_wrong)
-//
-//        btn_exit=view.findViewById(R.id.btn_exit)
-//        btn_play_again=view.findViewById(R.id.btn_play_again)
 
         addEvent()
     }

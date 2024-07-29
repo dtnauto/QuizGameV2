@@ -4,7 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="quizViewModel"
+            type="com.example.quizgamev2.viewmodel.QuizViewModel" />
 
+        <variable
+            name="resultViewModel"
+            type="com.example.quizgamev2.viewmodel.ResultViewModel" />
+
+        <variable
+            name="quizFragment"
+            type="com.example.quizgamev2.view.QuizFragment" />
     </data>
 
     <FrameLayout
